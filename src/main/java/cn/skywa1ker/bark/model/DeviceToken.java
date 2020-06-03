@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * @date 20/6/2
  */
 @Entity
-@Table(name = "device_token", indexes = {@Index(name = "idx_key", columnList = "key", unique = true)})
+@Table(name = "device_token", indexes = {@Index(name = "idx_key", columnList = "key")})
 @DynamicInsert
 @DynamicUpdate
 @Data
