@@ -5,15 +5,17 @@ import cn.skywa1ker.bark.service.PushService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * controller
@@ -21,6 +23,7 @@ import java.util.concurrent.ExecutionException;
  * @author hfb
  * @date 20/6/2
  */
+@Validated
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -29,19 +32,22 @@ public class PushController {
     private final PushService pushService;
 
     @RequestMapping(value = "/{key}/{body}", method = {RequestMethod.GET, RequestMethod.POST})
-    public ApiResponses<String> push1(@PathVariable String key, @PathVariable String body, HttpServletRequest request)
-        throws InterruptedException, ExecutionException, JsonProcessingException {
+    public ApiResponses<Void> push1(@NotBlank(message = "key为空") @PathVariable String key,
+        @NotNull(message = "body为空") @PathVariable String body, HttpServletRequest request)
+        throws JsonProcessingException {
         Map<String, String> parameterMap = getUrlParameterMap(request);
         pushService.push(key, "", body, parameterMap);
-        return ApiResponses.success("");
+        return ApiResponses.success();
     }
 
     @RequestMapping(value = "/{key}/{title}/{body}", method = {RequestMethod.GET, RequestMethod.POST})
-    public ApiResponses<String> push2(@PathVariable String key, @PathVariable String title, @PathVariable String body,
-        HttpServletRequest request) throws InterruptedException, ExecutionException, JsonProcessingException {
+    public ApiResponses<Void> push2(@NotBlank(message = "key为空") @PathVariable String key,
+        @NotNull(message = "title为空") @PathVariable String title,
+        @NotNull(message = "body为空") @PathVariable String body, HttpServletRequest request)
+        throws JsonProcessingException {
         Map<String, String> parameterMap = getUrlParameterMap(request);
         pushService.push(key, title, body, parameterMap);
-        return ApiResponses.success("");
+        return ApiResponses.success();
     }
 
     @RequestMapping(value = "/ping", method = {RequestMethod.GET, RequestMethod.POST})
@@ -50,7 +56,8 @@ public class PushController {
     }
 
     @RequestMapping(value = "/register", method = {RequestMethod.GET, RequestMethod.POST})
-    public ApiResponses<Map<String, String>> register(String key, String deviceToken) {
+    public ApiResponses<Map<String, String>> register(@RequestParam(required = false) String key,
+        @NotBlank(message = "deviceToken为空") @RequestParam(name = "devicetoken") String deviceToken) {
         key = pushService.register(key, deviceToken);
         Map<String, String> result = new HashMap<>(1);
         result.put("key", key);

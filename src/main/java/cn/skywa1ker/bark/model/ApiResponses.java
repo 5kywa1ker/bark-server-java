@@ -13,9 +13,6 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @Builder
-@EqualsAndHashCode(callSuper = false)
-@AllArgsConstructor
-@NoArgsConstructor
 public class ApiResponses<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -27,17 +24,17 @@ public class ApiResponses<T> implements Serializable {
     /**
      * 表示接口调用失败
      */
-    public static final int FAIL = -1;
+    public static final int FAIL = 500;
     /**
      * 表示没有权限调用该接口
      */
-    public static final int NO_PERMISSION = -2;
+    public static final int NO_PERMISSION = 403;
 
     public static final String SUCC_MSG = "成功";
     public static final String FAIL_MSG = "失败";
 
-    private String message = SUCC_MSG;
-    private Integer code = SUCCESS;
+    private String message;
+    private Integer code;
     /**
      * 结果集返回
      */
@@ -67,7 +64,6 @@ public class ApiResponses<T> implements Serializable {
      */
     public static ApiResponses<Void> failure() {
         return ApiResponses.<Void>builder().code(FAIL).message(FAIL_MSG).build();
-
     }
 
     /**
@@ -76,7 +72,6 @@ public class ApiResponses<T> implements Serializable {
      */
     public static ApiResponses<Void> failure(int result, String msg) {
         return ApiResponses.<Void>builder().code(result).message(msg).build();
-
     }
 
 }

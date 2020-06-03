@@ -68,11 +68,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.notnoop.apns</groupId>
-            <artifactId>apns</artifactId>
-            <version>1.0.0.Beta6</version>
-        </dependency>
         <!--html模板引擎 类似jsp-->
         <!--<dependency>-->
             <!--<groupId>org.springframework.boot</groupId>-->
