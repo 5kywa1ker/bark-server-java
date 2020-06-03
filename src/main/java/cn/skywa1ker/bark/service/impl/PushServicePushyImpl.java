@@ -91,7 +91,7 @@ public class PushServicePushyImpl implements PushService {
                     log.warn("\t…and the token is invalid as of {}", response.getTokenInvalidationTimestamp());
                 }
             }
-        }).join();
+        });
     }
 
     @Override
