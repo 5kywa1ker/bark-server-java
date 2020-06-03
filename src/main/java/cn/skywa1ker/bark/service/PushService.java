@@ -1,8 +1,11 @@
 package cn.skywa1ker.bark.service;
 
+import java.util.List;
 import java.util.Map;
 
+import cn.skywa1ker.bark.model.PushMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.data.domain.Pageable;
 
 /**
  * @author hfb
@@ -20,8 +23,7 @@ public interface PushService {
      *            内容
      * @param parameters
      *            其他参数
-     * @exception JsonProcessingException
-     *                序列化parameters成json异常
+     * @exception JsonProcessingException 序列化parameters成json异常
      */
     void push(String key, String title, String body, Map<String, String> parameters) throws JsonProcessingException;
 
@@ -35,4 +37,12 @@ public interface PushService {
      * @return key
      */
     String register(String key, String deviceToken);
+
+    /**
+     * 根据key查询推送消息历史
+     * @param key key
+     * @param pageable 分页
+     * @return list
+     */
+    List<PushMessage> pageMessageByKey(String key, Pageable pageable);
 }

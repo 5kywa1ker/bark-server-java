@@ -1,17 +1,10 @@
 package cn.skywa1ker.bark.service.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.stereotype.Service;
-import org.springframework.util.NumberUtils;
-import org.springframework.util.StringUtils;
-
+import cn.skywa1ker.bark.dao.DeviceTokenDao;
+import cn.skywa1ker.bark.dao.PushMessageDao;
+import cn.skywa1ker.bark.model.DeviceToken;
+import cn.skywa1ker.bark.model.PushMessage;
+import cn.skywa1ker.bark.service.PushService;
 import com.eatthepath.pushy.apns.ApnsClient;
 import com.eatthepath.pushy.apns.ApnsClientBuilder;
 import com.eatthepath.pushy.apns.util.ApnsPayloadBuilder;
@@ -20,14 +13,20 @@ import com.eatthepath.pushy.apns.util.SimpleApnsPushNotification;
 import com.eatthepath.pushy.apns.util.TokenUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import cn.skywa1ker.bark.dao.DeviceTokenDao;
-import cn.skywa1ker.bark.dao.PushMessageDao;
-import cn.skywa1ker.bark.model.DeviceToken;
-import cn.skywa1ker.bark.model.PushMessage;
-import cn.skywa1ker.bark.service.PushService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.util.NumberUtils;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Pushy实现
@@ -105,6 +104,12 @@ public class PushServicePushyImpl implements PushService {
         }
         oldKey.setDeviceToken(deviceToken).setUpdateTime(LocalDateTime.now());
         return deviceTokenDao.save(oldKey).getKey();
+    }
+
+    @Override
+    public List<PushMessage> pageMessageByKey(String key, Pageable pageable) {
+        DeviceToken deviceToken = deviceTokenDao.findFirstByKey(key);
+        return pushMessageDao.findByDeviceToken(deviceToken.getDeviceToken(), pageable);
     }
 
     private DeviceToken saveDeviceToken(String key, String deviceToken) {
