@@ -28,7 +28,9 @@ spring:
     show-sql: true
     open-in-view: true
   jackson:
+    time-zone: Asia/Shanghai
     default-property-inclusion: non_null
+    date-format: yyyy/MM/dd HH:mm:ss
 logging:
   level:
     root: info
