@@ -10,7 +10,7 @@
     </parent>
     <groupId>cn.skywa1ker</groupId>
     <artifactId>bark-server-java</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>bark-server-java</name>
     <description>bark server java</description>
 
@@ -56,6 +56,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.eatthepath</groupId>
+            <artifactId>pushy</artifactId>
+            <version>0.14.0</version>
         </dependency>
 
         <dependency>
