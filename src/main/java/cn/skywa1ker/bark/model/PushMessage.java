@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "push_message", indexes = {@Index(name = "idx_device_token", columnList = "deviceToken"), @Index(name =
-        "idx_key", columnList = "key")})
+        "idx_device_key", columnList = "key")})
 @DynamicInsert
 @DynamicUpdate
 @Data
