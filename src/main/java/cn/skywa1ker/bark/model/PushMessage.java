@@ -11,11 +11,13 @@ import java.time.LocalDateTime;
 
 /**
  * 保存推送的消息记录
+ *
  * @author hfb
  * @date 20/1/15
  */
 @Entity
-@Table(name = "push_message", indexes = {@Index(name = "idx_device_token", columnList = "deviceToken")})
+@Table(name = "push_message", indexes = {@Index(name = "idx_device_token", columnList = "deviceToken"), @Index(name =
+        "idx_key", columnList = "key")})
 @DynamicInsert
 @DynamicUpdate
 @Data
@@ -31,6 +33,9 @@ public class PushMessage implements Serializable {
 
     @Column(nullable = false)
     private String deviceToken;
+
+    @Column(nullable = false)
+    private String key;
 
     private String title;
 

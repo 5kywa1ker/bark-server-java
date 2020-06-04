@@ -30,7 +30,7 @@ import java.util.UUID;
 
 /**
  * Pushy实现
- * 
+ *
  * @author hfb
  * @date 20/6/2
  */
@@ -50,19 +50,20 @@ public class PushServicePushyImpl implements PushService {
     private void init() throws IOException {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("cert-20210125.p12");
         apnsClient = new ApnsClientBuilder().setApnsServer(ApnsClientBuilder.PRODUCTION_APNS_HOST)
-            .setClientCredentials(inputStream, "bp").build();
+                .setClientCredentials(inputStream, "bp").build();
     }
 
     @Override
     public void push(String key, String title, String body, Map<String, String> parameters)
-        throws JsonProcessingException {
+            throws JsonProcessingException {
         DeviceToken deviceToken = deviceTokenDao.findFirstByKey(key);
         if (deviceToken == null) {
             throw new RuntimeException("找不到 Key 对应的 DeviceToken, 请确保 Key 正确! Key 可在 App 端注册获得。");
         }
         // 保存到数据库
-        PushMessage pushMessage = new PushMessage().setDeviceToken(deviceToken.getDeviceToken()).setTitle(title)
-            .setBody(body).setParameters(objectMapper.writeValueAsString(parameters));
+        PushMessage pushMessage =
+                new PushMessage().setDeviceToken(deviceToken.getDeviceToken()).setKey(key).setTitle(title)
+                .setBody(body).setParameters(objectMapper.writeValueAsString(parameters));
         pushMessageDao.save(pushMessage);
 
         ApnsPayloadBuilder payloadBuilder = new SimpleApnsPayloadBuilder();
@@ -87,7 +88,7 @@ public class PushServicePushyImpl implements PushService {
             } else {
                 log.warn("Notification rejected by the APNs gateway:{}", response.getRejectionReason());
                 if (response.getTokenInvalidationTimestamp() != null) {
-                    log.warn("\t…and the token is invalid as of {}", response.getTokenInvalidationTimestamp());
+                    log.warn("and the token is invalid as of {}", response.getTokenInvalidationTimestamp());
                 }
             }
         });
