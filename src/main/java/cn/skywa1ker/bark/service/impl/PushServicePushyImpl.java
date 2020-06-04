@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.NumberUtils;
 import org.springframework.util.StringUtils;
 
@@ -44,8 +45,6 @@ public class PushServicePushyImpl implements PushService {
     private final DeviceTokenDao deviceTokenDao;
     private final ObjectMapper objectMapper;
 
-    private String badgeName = "badge";
-
     @PostConstruct
     private void init() throws IOException {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("cert-20210125.p12");
@@ -69,7 +68,7 @@ public class PushServicePushyImpl implements PushService {
         ApnsPayloadBuilder payloadBuilder = new SimpleApnsPayloadBuilder();
         payloadBuilder.setSound("default").setCategoryName("myNotificationCategory");
         payloadBuilder.setAlertTitle(title).setAlertBody(body);
-        String badge = parameters.get(badgeName);
+        String badge = parameters.get("badge");
         if (!StringUtils.isEmpty(badge)) {
             payloadBuilder.setBadgeNumber(NumberUtils.parseNumber(badge, Integer.class));
         }
@@ -111,6 +110,19 @@ public class PushServicePushyImpl implements PushService {
     public List<PushMessage> pageMessageByKey(String key, Pageable pageable) {
         DeviceToken deviceToken = deviceTokenDao.findFirstByKey(key);
         return pushMessageDao.findByDeviceTokenOrderByIdDesc(deviceToken.getDeviceToken(), pageable);
+    }
+
+    @Override
+    public void updateDeviceRemark(String key, String remark) {
+        DeviceToken deviceToken = deviceTokenDao.findFirstByKey(key);
+        Assert.notNull(deviceToken, "设备不存在 key:" + key);
+        deviceToken.setRemark(remark);
+        deviceTokenDao.save(deviceToken);
+    }
+
+    @Override
+    public List<DeviceToken> pageDevices(Pageable page) {
+        return deviceTokenDao.findAll(page).getContent();
     }
 
     private DeviceToken saveDeviceToken(String key, String deviceToken) {

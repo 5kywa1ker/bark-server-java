@@ -1,17 +1,16 @@
 package cn.skywa1ker.bark.controller;
 
 import cn.skywa1ker.bark.model.ApiResponses;
+import cn.skywa1ker.bark.model.DeviceToken;
 import cn.skywa1ker.bark.model.PushMessage;
 import cn.skywa1ker.bark.service.PushService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -36,6 +35,19 @@ public class MessageController {
                                                      @Range(min = 1, max = 1000) int pageSize,
                                                      @Range(min = 0) int pageNo) {
         return ApiResponses.success(pushService.pageMessageByKey(key, PageRequest.of(pageNo, pageSize)));
+    }
+
+    @GetMapping("/device/list")
+    public ApiResponses<List<DeviceToken>> pageDevices(@Range(min = 1, max = 1000) int pageSize,
+                                                       @Range(min = 0) int pageNo) {
+        return ApiResponses.success(pushService.pageDevices(PageRequest.of(pageNo, pageSize)));
+    }
+
+    @PostMapping("/device/updateRemark")
+    public ApiResponses<Void> updateDeviceRemark(@NotBlank(message = "key为空") String key,
+                                                 @Length(min = 1, max = 10, message = "remark长度1-10") String remark) {
+        pushService.updateDeviceRemark(key, remark);
+        return ApiResponses.success();
     }
 
 }

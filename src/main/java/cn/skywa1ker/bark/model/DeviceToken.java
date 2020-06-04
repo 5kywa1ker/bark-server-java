@@ -41,4 +41,6 @@ public class DeviceToken implements Serializable {
     @Column(nullable = false)
     private String deviceToken;
 
+    private String remark;
+
 }
