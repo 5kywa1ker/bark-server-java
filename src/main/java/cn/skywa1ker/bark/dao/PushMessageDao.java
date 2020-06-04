@@ -17,5 +17,5 @@ public interface PushMessageDao extends JpaRepository<PushMessage, Integer> {
      * @param pageable 分页
      * @return list
      */
-    List<PushMessage> findByDeviceToken(String deviceToken, Pageable pageable);
+    List<PushMessage> findByDeviceTokenOrderByIdDesc(String deviceToken, Pageable pageable);
 }

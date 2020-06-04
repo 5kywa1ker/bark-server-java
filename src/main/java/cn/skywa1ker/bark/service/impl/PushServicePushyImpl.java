@@ -110,7 +110,7 @@ public class PushServicePushyImpl implements PushService {
     @Override
     public List<PushMessage> pageMessageByKey(String key, Pageable pageable) {
         DeviceToken deviceToken = deviceTokenDao.findFirstByKey(key);
-        return pushMessageDao.findByDeviceToken(deviceToken.getDeviceToken(), pageable);
+        return pushMessageDao.findByDeviceTokenOrderByIdDesc(deviceToken.getDeviceToken(), pageable);
     }
 
     private DeviceToken saveDeviceToken(String key, String deviceToken) {
