@@ -1,6 +1,10 @@
 server:
   port: 8081
 spring:
+  security:
+    user:
+      name: admin
+      password: admin
   mvc:
     throw-exception-if-no-handler-found: false
   datasource:
@@ -14,9 +18,9 @@ spring:
     username: sa
   h2:
     console:
-      path: /h2-console
       settings:
         web-allow-others: true
+      enabled: false
   jpa:
     database: mysql
     generate-ddl: true
@@ -34,3 +38,4 @@ spring:
 logging:
   level:
     root: info
+

@@ -1,19 +1,21 @@
 package cn.skywa1ker.bark.controller;
 
+import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+
+import org.hibernate.validator.constraints.Length;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import cn.skywa1ker.bark.model.ApiResponses;
 import cn.skywa1ker.bark.model.DeviceToken;
 import cn.skywa1ker.bark.model.PushMessage;
 import cn.skywa1ker.bark.service.PushService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.Range;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 /**
  * message controller
@@ -32,15 +34,13 @@ public class MessageController {
 
     @GetMapping("/{key}")
     public ApiResponses<List<PushMessage>> pageByKey(@NotBlank(message = "key为空") @PathVariable String key,
-                                                     @Range(min = 1, max = 1000) int pageSize,
-                                                     @Range(min = 0) int pageNo) {
-        return ApiResponses.success(pushService.pageMessageByKey(key, PageRequest.of(pageNo, pageSize)));
+        @PageableDefault Pageable pageable) {
+        return ApiResponses.success(pushService.pageMessageByKey(key, pageable));
     }
 
     @GetMapping("/device/list")
-    public ApiResponses<List<DeviceToken>> pageDevices(@Range(min = 1, max = 1000) int pageSize,
-                                                       @Range(min = 0) int pageNo) {
-        return ApiResponses.success(pushService.pageDevices(PageRequest.of(pageNo, pageSize)));
+    public ApiResponses<List<DeviceToken>> pageDevices(@PageableDefault Pageable pageable) {
+        return ApiResponses.success(pushService.pageDevices(pageable));
     }
 
     @PostMapping("/device/updateRemark")
