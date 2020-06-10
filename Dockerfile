@@ -18,7 +18,7 @@ RUN set -eux;ls -la;mvn clean package -DskipTests && cp $HOME/code/target/$JAR_F
 
 # 启动脚本
 WORKDIR $HOME
-CMD ["java","-jar", "$HOME/$JAR_FILE"]
+CMD ["sh","-c", "java -jar $JAR_FILE"]
 
 # 端口
 EXPOSE 8081
