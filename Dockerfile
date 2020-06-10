@@ -1,6 +1,6 @@
 FROM openjdk:8-jdk
 
-ARG JAR_FILE=bark-server-java.jar
+ENV JAR_FILE=bark-server-java.jar
 USER root
 # 设置时区 安装ps命令
 ENV TZ=Asia/Shanghai
