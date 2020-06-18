@@ -1,13 +1,14 @@
-FROM openjdk:8-jdk-alpine
+FROM alpine:3.12.0
 
 ENV JAR_FILE=bark-server-java.jar
 USER root
 # 设置时区 安装ps命令
 ENV TZ=Asia/Shanghai
 RUN set -eux; \
-    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime; \
-    echo $TZ > /etc/timezone; \
-    apt-get update && apt-get install -y procps && apt-get install -y maven
+    apk update; \
+    apk add -U tzdata; \
+    cp /usr/share/zoneinfo/$TZ /etc/localtime; \
+    apk add -U maven
 # 新建应用目录
 ARG HOME=/data/bark
 RUN mkdir -p $HOME/config;mkdir $HOME/log;mkdir $HOME/h2db;mkdir $HOME/code;ls -la $HOME
