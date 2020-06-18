@@ -1,4 +1,4 @@
-FROM alpine:3.12.0
+FROM openjdk:8-jdk-alpine
 
 ENV JAR_FILE=bark-server-java.jar
 USER root
