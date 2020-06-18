@@ -68,7 +68,7 @@ public class PushServicePushyImpl implements PushService {
         pushMessageDao.save(pushMessage);
 
         ApnsPayloadBuilder payloadBuilder = new SimpleApnsPayloadBuilder();
-        payloadBuilder.setSound("default").setCategoryName("myNotificationCategory");
+        payloadBuilder.setSound("default").setCategoryName("myNotificationCategory").setMutableContent(true);
         payloadBuilder.setAlertTitle(title).setAlertBody(body);
         String badge = parameters.get("badge");
         if (!StringUtils.isEmpty(badge)) {
