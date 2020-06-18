@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Bark</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/static/tmp/css/bootstrap.min.css}" rel="stylesheet">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            padding-top: 3.5rem;
+        }
+
+        .my {
+            border-bottom: 1px solid #e2e3e5;
+            margin-top: 1rem;
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .my-foot {
+            margin-top: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#" th:text="${key}">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<main role="main">
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <!--    <div class="jumbotron">-->
+    <!--        <div class="container">-->
+    <!--            <h1 class="display-3">Hello, world!</h1>-->
+    <!--            <p>This is a template for a simple marketing or informational website. It includes a large callout called a-->
+    <!--                jumbotron and three supporting pieces of content. Use it as a starting point to create something more-->
+    <!--                unique.</p>-->
+    <!--            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>-->
+    <!--        </div>-->
+    <!--    </div>-->
+
+    <div class="container">
+        <!-- Example row of columns -->
+        <div class="row">
+            <div class="col-md-4 my">
+                <h4>标题</h4>
+                <p>内容</p>
+                <p>时间</p>
+            </div>
+            <div class="col-md-4 my">
+                <h4>标题</h4>
+                <p>内容</p>
+                <p>时间</p>
+            </div>
+        </div>
+
+    </div> <!-- /container -->
+
+</main>
+
+<footer class="container my-foot">
+    <p>&copy; Skywa1ker 2020</p>
+</footer>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script>window.jQuery || document.write('<script src="../assets/js/vendor/jquery.slim.min.js"><\/script>')</script>
+<script th:src="@{/static/tmp/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
