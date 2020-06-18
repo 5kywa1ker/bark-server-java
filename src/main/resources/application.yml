@@ -38,4 +38,6 @@ spring:
 logging:
   level:
     root: info
-
+application:
+  cert-file-name: cert-20210125.p12
+  cert-pwd: bp

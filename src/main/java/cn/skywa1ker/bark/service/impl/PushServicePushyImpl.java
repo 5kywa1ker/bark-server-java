@@ -1,7 +1,6 @@
 package cn.skywa1ker.bark.service.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.hutool.core.util.IdUtil;
+import cn.skywa1ker.bark.config.ApplicationConfigProperties;
 import cn.skywa1ker.bark.dao.DeviceTokenDao;
 import cn.skywa1ker.bark.dao.PushMessageDao;
 import cn.skywa1ker.bark.model.DeviceToken;
@@ -47,12 +47,33 @@ public class PushServicePushyImpl implements PushService {
     private final PushMessageDao pushMessageDao;
     private final DeviceTokenDao deviceTokenDao;
     private final ObjectMapper objectMapper;
+    private final ApplicationConfigProperties appConfig;
 
     @PostConstruct
     private void init() throws IOException {
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("cert-20210125.p12");
+        InputStream inputStream = loadCert(appConfig.getCertFileName());
         apnsClient = new ApnsClientBuilder().setApnsServer(ApnsClientBuilder.PRODUCTION_APNS_HOST)
-            .setClientCredentials(inputStream, "bp").build();
+            .setClientCredentials(inputStream, appConfig.getCertPwd()).build();
+    }
+
+    /**
+     * 加载证书文件 优先从config目录加载 其次从classpath加载
+     * 
+     * @param fileName
+     *            文件名
+     * @return InputStream
+     */
+    private InputStream loadCert(String fileName) throws FileNotFoundException {
+        File file = new File("config" + File.separator + fileName);
+        if (file.exists() && file.isFile()) {
+            log.info("cert:{}", file.getAbsolutePath());
+            return new FileInputStream(file);
+        }
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(fileName);
+        if (inputStream == null) {
+            throw new FileNotFoundException("证书未找到");
+        }
+        return inputStream;
     }
 
     @Override
