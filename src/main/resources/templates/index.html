@@ -2,7 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1,user-scalable=0;">
     <title>Bark</title>
     <!-- Bootstrap core CSS -->
     <link th:href="@{/static/tmp/css/bootstrap.min.css}" rel="stylesheet">
@@ -16,28 +16,16 @@
         .my {
             border-bottom: 1px solid #e2e3e5;
             margin-top: 1rem;
-            margin-left: 0.5rem;
-            margin-right: 0.5rem;
         }
 
         .my-foot {
             padding: 1rem 0;
         }
-
-        .load-more {
-            text-align: center;
-        }
-
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
-            }
-        }
     </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <a class="navbar-brand" href="#" th:text="${key}">Navbar</a>
+    <a class="navbar-brand" href="#">历史消息</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
             aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -46,7 +34,7 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="#">Key:&nbsp;<span class='badge badge-pill badge-primary' th:text="${key}"></span></a>
             </li>
         </ul>
     </div>
@@ -56,17 +44,12 @@
     <div class="container" id="content">
         <!-- Example row of columns -->
         <div class="row" id="msg-list">
-            <!--<div class="col-md-4 my">-->
-            <!--<h4>标题</h4>-->
-            <!--<p>内容</p>-->
-            <!--<p>时间</p>-->
-            <!--</div>-->
         </div>
-        <div class="load-more">
+        <div class="text-center">
             <button onclick="loadMore()" type="button" class="btn btn-link">加载更多</button>
         </div>
         <div class="container my-foot">
-            <p>&copy; Skywa1ker 2020</p>
+            <p class="text-center">&copy; Skywa1ker 2020</p>
         </div>
     </div> <!-- /container -->
 
@@ -101,9 +84,9 @@
 
     function appendToPage(div, data) {
         $(data).each(function (index, item) {
-            let msgDiv = $("<div class='col-md-4 my'></div>");
+            let msgDiv = $("<div class='col-md-3 col-sm-1 my'></div>");
             msgDiv.append($("<h6></h6>").text(item.title));
-            msgDiv.append($("<p></p>").text(item.body));
+            msgDiv.append($("<p class='small'></p>").text(item.body));
             msgDiv.append($("<p></p>").append($("<span class='badge badge-pill badge-secondary'></span>").text(item.addTime)));
             div.append(msgDiv);
         });
