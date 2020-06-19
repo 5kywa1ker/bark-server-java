@@ -6,17 +6,9 @@
     <title>Bark</title>
     <!-- Bootstrap core CSS -->
     <link th:href="@{/static/tmp/css/bootstrap.min.css}" rel="stylesheet">
-
+    <script th:src="@{/static/tmp/js/jquery.min.js}"></script>
+    <script th:src="@{/static/tmp/js/bootstrap.bundle.min.js}"></script>
     <style>
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
         body {
             padding-top: 3.5rem;
         }
@@ -29,7 +21,11 @@
         }
 
         .my-foot {
-            margin-top: 1rem;
+            padding: 1rem 0;
+        }
+
+        .load-more {
+            text-align: center;
         }
 
         @media (min-width: 768px) {
@@ -57,44 +53,63 @@
 </nav>
 
 <main role="main">
-
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-    <!--    <div class="jumbotron">-->
-    <!--        <div class="container">-->
-    <!--            <h1 class="display-3">Hello, world!</h1>-->
-    <!--            <p>This is a template for a simple marketing or informational website. It includes a large callout called a-->
-    <!--                jumbotron and three supporting pieces of content. Use it as a starting point to create something more-->
-    <!--                unique.</p>-->
-    <!--            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>-->
-    <!--        </div>-->
-    <!--    </div>-->
-
-    <div class="container">
+    <div class="container" id="content">
         <!-- Example row of columns -->
-        <div class="row">
-            <div class="col-md-4 my">
-                <h4>标题</h4>
-                <p>内容</p>
-                <p>时间</p>
-            </div>
-            <div class="col-md-4 my">
-                <h4>标题</h4>
-                <p>内容</p>
-                <p>时间</p>
-            </div>
+        <div class="row" id="msg-list">
+            <!--<div class="col-md-4 my">-->
+            <!--<h4>标题</h4>-->
+            <!--<p>内容</p>-->
+            <!--<p>时间</p>-->
+            <!--</div>-->
         </div>
-
+        <div class="load-more">
+            <button onclick="loadMore()" type="button" class="btn btn-link">加载更多</button>
+        </div>
+        <div class="container my-foot">
+            <p>&copy; Skywa1ker 2020</p>
+        </div>
     </div> <!-- /container -->
 
 </main>
+<script th:inline="javascript">
+    // <![CDATA[
+    $(function () {
+        loadNew(pageNo);
+    });
+    let pageNo = 0;
+    let key = [[${key}]];
 
-<footer class="container my-foot">
-    <p>&copy; Skywa1ker 2020</p>
-</footer>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-<script>window.jQuery || document.write('<script src="../assets/js/vendor/jquery.slim.min.js"><\/script>')</script>
-<script th:src="@{/static/tmp/js/bootstrap.bundle.min.js}"></script>
+    function loadNew(pageIndex) {
+        let url = key + "?size=10&page=" + pageIndex;
+        $.get(url, function (data) {
+            if (data.code === 200) {
+                pageNo++;
+                let div = $("#msg-list");
+                if ((!data.data || data.data.length <= 0) && pageNo > 0) {
+                    alert("没有更多了");
+                }
+                appendToPage(div, data.data);
+            } else {
+                alert("请求失败！")
+            }
+        });
+    }
+
+    function loadMore() {
+        loadNew(pageNo);
+    }
+
+    function appendToPage(div, data) {
+        $(data).each(function (index, item) {
+            let msgDiv = $("<div class='col-md-4 my'></div>");
+            msgDiv.append($("<h6></h6>").text(item.title));
+            msgDiv.append($("<p></p>").text(item.body));
+            msgDiv.append($("<p></p>").append($("<span class='badge badge-pill badge-secondary'></span>").text(item.addTime)));
+            div.append(msgDiv);
+        });
+    }
+
+    // ]]>
+</script>
 </body>
 </html>

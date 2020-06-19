@@ -132,6 +132,9 @@ public class PushServicePushyImpl implements PushService {
     @Override
     public List<PushMessage> pageMessageByKey(String key, Pageable pageable) {
         DeviceToken deviceToken = deviceTokenDao.findFirstByKey(key);
+        if (deviceToken == null) {
+            throw new RuntimeException("设备不存在");
+        }
         return pushMessageDao.findByDeviceTokenOrderByIdDesc(deviceToken.getDeviceToken(), pageable);
     }
 
