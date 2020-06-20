@@ -86,7 +86,7 @@
 
     function appendToPage(div, data) {
         $(data).each(function (index, item) {
-            let msgDiv = $("<div class='col-md-3 col-sm-1 my'></div>");
+            let msgDiv = $("<div class='col-md-3 col-sm-12 my'></div>");
             msgDiv.append($("<h6></h6>").text(item.title));
             msgDiv.append($("<p class='small'></p>").text(item.body));
             msgDiv.append($("<p></p>").append($("<span class='badge badge-pill badge-secondary'></span>").text(item.addTime)));
