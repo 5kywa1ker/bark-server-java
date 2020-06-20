@@ -2,93 +2,126 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1,user-scalable=0;">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1,user-scalable=0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Bark</title>
     <!-- Bootstrap core CSS -->
-    <link th:href="@{/static/tmp/css/bootstrap.min.css}" rel="stylesheet">
-    <script th:src="@{/static/tmp/js/jquery.min.js}"></script>
-    <script th:src="@{/static/tmp/js/bootstrap.bundle.min.js}"></script>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/static/tmp/js/jquery.min.js"><\/script>')</script>
     <style>
         body {
             padding-top: 3.5rem;
-        }
-
-        .my {
-            border-bottom: 1px solid #e2e3e5;
-            margin-top: 1rem;
+            background-color: rgb(248, 249, 250);
         }
 
         .my-foot {
             padding: 1rem 0;
         }
+
+        .card {
+            box-shadow: rgba(60, 64, 67, .3) 0 1px 2px 0, rgba(60, 64, 67, .15) 0 1px 3px 1px;
+            margin: 1rem;
+            background-color: white;
+            padding-top: 1rem;
+        }
+
+        #content {
+            padding: 1rem;
+        }
+
+        form > .form-group {
+            margin-bottom: 0;
+        }
+
     </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <a class="navbar-brand" href="#">历史消息</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
-            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+    <a class="navbar-brand" href="#">Bark</a>
 
-    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Key:&nbsp;<span class='badge badge-pill badge-primary' th:text="${key}"></span></a>
-            </li>
-        </ul>
-    </div>
 </nav>
 
 <main role="main">
     <div class="container" id="content">
+        <h5 class="lead">设备列表</h5>
         <!-- Example row of columns -->
-        <div class="row" id="msg-list">
-        </div>
-        <div class="text-center">
-            <button onclick="loadMore()" type="button" class="btn btn-link">加载更多</button>
+        <div class="row" id="device-list">
+            <div class="card col-md-12 col-sm-12 " th:each="item,stat:${devices}">
+                <form>
+                    <div class="form-group row">
+                        <label th:for="${item['key']}"
+                               class="col-sm-2 col-form-label"><strong>备注</strong></label>
+                        <div class="col-sm-10 input-group">
+                            <input type="text" class="form-control"
+                                   th:id="${item['key']}"
+                                   th:value="${item['remark']}"
+                                   placeholder="备注"/>
+                            <button class="btn btn-success"
+                                    th:onclick="updateRemark([[${item['key']}]]);">修改
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label"><strong>Key</strong></label>
+                        <div class="col-sm-10">
+                            <label>
+                                <a th:href="'/message/list?key=' + ${item['key']}" th:text="${item['key']}"></a>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label"><strong>DeviceToken</strong></label>
+                        <div class="col-sm-10">
+                            <p th:text="${item['deviceToken']}"></p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label"><strong>注册时间</strong></label>
+                        <div class="col-sm-10">
+                            <p>
+                                <span th:text="${#temporals.format(item['addTime'], 'yy/MM/dd HH:mm:ss')}"
+                                      class="badge badge-pill badge-primary"></span>
+                            </p>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
         </div>
         <div class="container my-foot">
             <p class="text-center">&copy; Skywa1ker 2020</p>
         </div>
-    </div> <!-- /container -->
-
+    </div>
 </main>
 <script th:inline="javascript">
     // <![CDATA[
     $(function () {
-        loadNew(pageNo);
-    });
-    let pageNo = 0;
-    let key = [[${key}]];
-
-    function loadNew(pageIndex) {
-        let url = key + "?size=10&page=" + pageIndex;
-        $.get(url, function (data) {
-            if (data.code === 200) {
-                pageNo++;
-                let div = $("#msg-list");
-                if ((!data.data || data.data.length <= 0) && pageNo > 0) {
-                    alert("没有更多了");
-                }
-                appendToPage(div, data.data);
-            } else {
-                alert("请求失败！")
-            }
+        let token = $("meta[name='_csrf']").attr("content");
+        let header = $("meta[name='_csrf_header']").attr("content");
+        $(document).ajaxSend(function (e, xhr, options) {
+            xhr.setRequestHeader(header, token);
         });
-    }
+    });
 
-    function loadMore() {
-        loadNew(pageNo);
-    }
-
-    function appendToPage(div, data) {
-        $(data).each(function (index, item) {
-            let msgDiv = $("<div class='col-md-3 col-sm-1 my'></div>");
-            msgDiv.append($("<h6></h6>").text(item.title));
-            msgDiv.append($("<p class='small'></p>").text(item.body));
-            msgDiv.append($("<p></p>").append($("<span class='badge badge-pill badge-secondary'></span>").text(item.addTime)));
-            div.append(msgDiv);
+    function updateRemark(key) {
+        let inputId = "#" + key;
+        let remark = $(inputId).val();
+        console.log(key + "," + remark);
+        let url = "/message/device/updateRemark";
+        let data = {
+            key: key,
+            remark: remark
+        };
+        $.post(url, data, function (result) {
+            if (result.code === 200) {
+                alert("修改成功！")
+            } else {
+                alert("修改失败：" + result.message)
+            }
         });
     }
 

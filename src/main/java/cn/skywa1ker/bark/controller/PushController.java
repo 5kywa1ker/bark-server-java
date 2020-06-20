@@ -1,24 +1,24 @@
 package cn.skywa1ker.bark.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import cn.skywa1ker.bark.model.ApiResponses;
+import cn.skywa1ker.bark.model.DeviceToken;
+import cn.skywa1ker.bark.service.PushService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import cn.skywa1ker.bark.model.ApiResponses;
-import cn.skywa1ker.bark.service.PushService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * controller
@@ -29,11 +29,12 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 @Slf4j
 @RequiredArgsConstructor
-@RestController
+@Controller
 public class PushController {
 
     private final PushService pushService;
 
+    @ResponseBody
     @RequestMapping(value = "/{key}/{body}", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResponses<Void> push1(@NotBlank(message = "key为空") @PathVariable String key,
         @NotNull(message = "body为空") @PathVariable String body, HttpServletRequest request)
@@ -43,6 +44,7 @@ public class PushController {
         return ApiResponses.success();
     }
 
+    @ResponseBody
     @RequestMapping(value = "/{key}/{title}/{body}", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResponses<Void> push2(@NotBlank(message = "key为空") @PathVariable String key,
         @NotNull(message = "title为空") @PathVariable String title,
@@ -53,11 +55,13 @@ public class PushController {
         return ApiResponses.success();
     }
 
+    @ResponseBody
     @RequestMapping(value = "/ping", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResponses<String> ping() {
         return ApiResponses.success("pong");
     }
 
+    @ResponseBody
     @RequestMapping(value = "/register", method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResponses<Map<String, String>> register(@RequestParam(required = false) String key,
         @NotBlank(message = "deviceToken为空") @RequestParam(name = "devicetoken") String deviceToken) {
@@ -65,6 +69,13 @@ public class PushController {
         Map<String, String> result = new HashMap<>(1);
         result.put("key", key);
         return ApiResponses.success(result).setMessage("注册成功");
+    }
+
+    @GetMapping("/")
+    public String index(Map<String, Object> map) {
+        List<DeviceToken> list = pushService.listAllDevices();
+        map.put("devices", list);
+        return "index";
     }
 
     private Map<String, String> getUrlParameterMap(HttpServletRequest request) {

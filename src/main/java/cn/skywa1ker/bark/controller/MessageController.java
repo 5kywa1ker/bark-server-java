@@ -1,10 +1,11 @@
 package cn.skywa1ker.bark.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.constraints.NotBlank;
-
+import cn.skywa1ker.bark.model.ApiResponses;
+import cn.skywa1ker.bark.model.DeviceToken;
+import cn.skywa1ker.bark.model.PushMessage;
+import cn.skywa1ker.bark.service.PushService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -12,12 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import cn.skywa1ker.bark.model.ApiResponses;
-import cn.skywa1ker.bark.model.DeviceToken;
-import cn.skywa1ker.bark.model.PushMessage;
-import cn.skywa1ker.bark.service.PushService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import javax.validation.constraints.NotBlank;
+import java.util.List;
+import java.util.Map;
 
 /**
  * message controller
@@ -43,8 +41,8 @@ public class MessageController {
 
     @ResponseBody
     @GetMapping("/device/list")
-    public ApiResponses<List<DeviceToken>> pageDevices(@PageableDefault Pageable pageable) {
-        return ApiResponses.success(pushService.pageDevices(pageable));
+    public ApiResponses<List<DeviceToken>> pageDevices() {
+        return ApiResponses.success(pushService.listAllDevices());
     }
 
     @ResponseBody
@@ -58,7 +56,7 @@ public class MessageController {
     @GetMapping("/list")
     public String index(@NotBlank(message = "key为空") String key, Map<String, Object> map) {
         map.put("key", key);
-        return "index";
+        return "msgList";
     }
 
 }

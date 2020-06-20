@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1,user-scalable=0">
+    <title>Bark</title>
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/static/tmp/js/jquery.min.js"><\/script>')</script>
+    <style>
+        body {
+            padding-top: 3.5rem;
+            background-color: rgb(248, 249, 250);
+        }
+
+        .my {
+            border-bottom: 1px solid #e2e3e5;
+            margin-top: 1rem;
+        }
+
+        .my-foot {
+            padding: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="/">历史消息</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <span class="nav-link">Key:&nbsp;<span class='badge badge-pill badge-primary' th:text="${key}"></span></span>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<main role="main">
+    <div class="container" id="content">
+        <!-- Example row of columns -->
+        <div class="row" id="msg-list">
+        </div>
+        <div class="text-center">
+            <button onclick="loadMore()" type="button" class="btn btn-link">加载更多</button>
+        </div>
+        <div class="container my-foot">
+            <p class="text-center">&copy; Skywa1ker 2020</p>
+        </div>
+    </div> <!-- /container -->
+
+</main>
+<script th:inline="javascript">
+    // <![CDATA[
+    $(function () {
+        loadNew(pageNo);
+    });
+    let pageNo = 0;
+    let key = [[${key}]];
+
+    function loadNew(pageIndex) {
+        let url = key + "?size=10&page=" + pageIndex;
+        $.get(url, function (data) {
+            if (data.code === 200) {
+                pageNo++;
+                let div = $("#msg-list");
+                if ((!data.data || data.data.length <= 0) && pageNo > 0) {
+                    alert("没有更多了");
+                }
+                appendToPage(div, data.data);
+            } else {
+                alert("请求失败！")
+            }
+        });
+    }
+
+    function loadMore() {
+        loadNew(pageNo);
+    }
+
+    function appendToPage(div, data) {
+        $(data).each(function (index, item) {
+            let msgDiv = $("<div class='col-md-3 col-sm-1 my'></div>");
+            msgDiv.append($("<h6></h6>").text(item.title));
+            msgDiv.append($("<p class='small'></p>").text(item.body));
+            msgDiv.append($("<p></p>").append($("<span class='badge badge-pill badge-secondary'></span>").text(item.addTime)));
+            div.append(msgDiv);
+        });
+    }
+
+    // ]]>
+</script>
+</body>
+</html>

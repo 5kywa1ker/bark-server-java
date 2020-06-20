@@ -1,13 +1,12 @@
 package cn.skywa1ker.bark.service;
 
-import java.util.List;
-import java.util.Map;
-
 import cn.skywa1ker.bark.model.DeviceToken;
 import cn.skywa1ker.bark.model.PushMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author hfb
@@ -57,8 +56,7 @@ public interface PushService {
 
     /**
      * 查询所有设备
-     * @param page 分页
      * @return list
      */
-    List<DeviceToken> pageDevices(Pageable page);
+    List<DeviceToken> listAllDevices();
 }

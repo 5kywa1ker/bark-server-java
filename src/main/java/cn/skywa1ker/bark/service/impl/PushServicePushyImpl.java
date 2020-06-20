@@ -1,18 +1,12 @@
 package cn.skywa1ker.bark.service.impl;
 
-import java.io.*;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-import org.springframework.util.NumberUtils;
-import org.springframework.util.StringUtils;
-
+import cn.hutool.core.util.IdUtil;
+import cn.skywa1ker.bark.config.ApplicationConfigProperties;
+import cn.skywa1ker.bark.dao.DeviceTokenDao;
+import cn.skywa1ker.bark.dao.PushMessageDao;
+import cn.skywa1ker.bark.model.DeviceToken;
+import cn.skywa1ker.bark.model.PushMessage;
+import cn.skywa1ker.bark.service.PushService;
 import com.eatthepath.pushy.apns.ApnsClient;
 import com.eatthepath.pushy.apns.ApnsClientBuilder;
 import com.eatthepath.pushy.apns.util.ApnsPayloadBuilder;
@@ -21,16 +15,19 @@ import com.eatthepath.pushy.apns.util.SimpleApnsPushNotification;
 import com.eatthepath.pushy.apns.util.TokenUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import cn.hutool.core.util.IdUtil;
-import cn.skywa1ker.bark.config.ApplicationConfigProperties;
-import cn.skywa1ker.bark.dao.DeviceTokenDao;
-import cn.skywa1ker.bark.dao.PushMessageDao;
-import cn.skywa1ker.bark.model.DeviceToken;
-import cn.skywa1ker.bark.model.PushMessage;
-import cn.skywa1ker.bark.service.PushService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.util.NumberUtils;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.PostConstruct;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Pushy实现
@@ -147,8 +144,8 @@ public class PushServicePushyImpl implements PushService {
     }
 
     @Override
-    public List<DeviceToken> pageDevices(Pageable page) {
-        return deviceTokenDao.findAll(page).getContent();
+    public List<DeviceToken> listAllDevices() {
+        return deviceTokenDao.findAll();
     }
 
     private DeviceToken saveDeviceToken(String key, String deviceToken) {
