@@ -48,7 +48,7 @@ public class MessageController {
     @ResponseBody
     @PostMapping("/device/updateRemark")
     public ApiResponses<Void> updateDeviceRemark(@NotBlank(message = "key为空") String key,
-                                                 @Length(min = 1, max = 10, message = "remark长度1-10") String remark) {
+                                                 @Length(min = 1, max = 20, message = "remark长度1-20") String remark) {
         pushService.updateDeviceRemark(key, remark);
         return ApiResponses.success();
     }
