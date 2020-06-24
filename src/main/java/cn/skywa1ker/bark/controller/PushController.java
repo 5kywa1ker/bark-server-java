@@ -6,6 +6,7 @@ import cn.skywa1ker.bark.service.PushService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +16,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 /**
  * controller
@@ -34,23 +33,15 @@ public class PushController {
 
     private final PushService pushService;
 
-    @ResponseBody
-    @RequestMapping(value = "/{key}/{body}", method = {RequestMethod.GET, RequestMethod.POST})
-    public ApiResponses<Void> push1(@NotBlank(message = "key为空") @PathVariable String key,
-        @NotNull(message = "body为空") @PathVariable String body, HttpServletRequest request)
-        throws JsonProcessingException {
-        Map<String, String> parameterMap = getUrlParameterMap(request);
-        pushService.push(key, "", body, parameterMap);
-        return ApiResponses.success();
-    }
 
     @ResponseBody
-    @RequestMapping(value = "/{key}/{title}/{body}", method = {RequestMethod.GET, RequestMethod.POST})
-    public ApiResponses<Void> push2(@NotBlank(message = "key为空") @PathVariable String key,
-        @NotNull(message = "title为空") @PathVariable String title,
-        @NotNull(message = "body为空") @PathVariable String body, HttpServletRequest request)
-        throws JsonProcessingException {
-        Map<String, String> parameterMap = getUrlParameterMap(request);
+    @RequestMapping(value = "/push/{key}", method = {RequestMethod.GET, RequestMethod.POST})
+    public ApiResponses<Void> push(@NotBlank(message = "key为空") @PathVariable String key,
+                                   @Length(max = 100, message = "title长度0-100")
+                                   @RequestParam(required = false, defaultValue = "") String title,
+                                   @NotNull(message = "body为空") @RequestParam String body, HttpServletRequest request)
+            throws JsonProcessingException {
+        Map<String, String> parameterMap = getUrlParameterMap(request, "title", "body");
         pushService.push(key, title, body, parameterMap);
         return ApiResponses.success();
     }
@@ -78,13 +69,17 @@ public class PushController {
         return "index";
     }
 
-    private Map<String, String> getUrlParameterMap(HttpServletRequest request) {
+    private Map<String, String> getUrlParameterMap(HttpServletRequest request, String...ignore) {
         Map<String, String> paramsMap = new HashMap<>(16);
         Enumeration<String> params = request.getParameterNames();
+        Set<String> ignoreSet = new HashSet<>(Arrays.asList(ignore));
         while (params.hasMoreElements()) {
             String paramName = params.nextElement().trim();
+            if (ignoreSet.contains(paramName)) {
+                continue;
+            }
             try {
-                paramsMap.put(paramName, URLDecoder.decode(request.getParameter(paramName), "UTF-8"));
+                paramsMap.put(paramName, URLDecoder.decode(request.getParameter(paramName), StandardCharsets.UTF_8.name()));
             } catch (UnsupportedEncodingException e) {
                 log.error(e.getMessage(), e);
             }
