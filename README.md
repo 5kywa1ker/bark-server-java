@@ -1,7 +1,7 @@
 # bark-server-java
 
 >该项目是[bark-server](https://github.com/Finb/bark-server)的java实现，基于SpringBoot,[pushy](https://github.com/jchambers/pushy)
-## Docker部署
+## Docker 部署
 ``` sh
 docker pull skywa1ker/bark-server-java:latest
 ```
