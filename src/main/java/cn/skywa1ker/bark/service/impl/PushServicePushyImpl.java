@@ -54,7 +54,7 @@ public class PushServicePushyImpl implements PushService {
         InputStream inputStream = loadCert(appConfig.getCertFileName());
         apnsClient = new ApnsClientBuilder().setApnsServer(ApnsClientBuilder.PRODUCTION_APNS_HOST)
                 .setSigningKey(ApnsSigningKey.loadFromInputStream(inputStream, appConfig.getTeamId(), appConfig.getKeyId()))
-            .setClientCredentials(inputStream, appConfig.getCertPwd()).build();
+                .build();
     }
 
     /**
