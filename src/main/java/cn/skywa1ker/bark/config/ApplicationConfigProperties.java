@@ -23,4 +23,8 @@ public class ApplicationConfigProperties {
      * 证书密码
      */
     private String certPwd = "bp";
+
+    private String teamId = "LH4T9V5U4R";
+
+    private String keyId = "5U8LBRXG3A";
 }

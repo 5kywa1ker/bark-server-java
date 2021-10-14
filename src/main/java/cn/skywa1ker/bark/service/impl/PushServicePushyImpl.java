@@ -9,6 +9,7 @@ import cn.skywa1ker.bark.model.PushMessage;
 import cn.skywa1ker.bark.service.PushService;
 import com.eatthepath.pushy.apns.ApnsClient;
 import com.eatthepath.pushy.apns.ApnsClientBuilder;
+import com.eatthepath.pushy.apns.auth.ApnsSigningKey;
 import com.eatthepath.pushy.apns.util.ApnsPayloadBuilder;
 import com.eatthepath.pushy.apns.util.SimpleApnsPayloadBuilder;
 import com.eatthepath.pushy.apns.util.SimpleApnsPushNotification;
@@ -25,6 +26,8 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -47,9 +50,10 @@ public class PushServicePushyImpl implements PushService {
     private final ApplicationConfigProperties appConfig;
 
     @PostConstruct
-    private void init() throws IOException {
+    private void init() throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         InputStream inputStream = loadCert(appConfig.getCertFileName());
         apnsClient = new ApnsClientBuilder().setApnsServer(ApnsClientBuilder.PRODUCTION_APNS_HOST)
+                .setSigningKey(ApnsSigningKey.loadFromInputStream(inputStream, appConfig.getTeamId(), appConfig.getKeyId()))
             .setClientCredentials(inputStream, appConfig.getCertPwd()).build();
     }
 
@@ -106,7 +110,7 @@ public class PushServicePushyImpl implements PushService {
                 log.info("Push notification accepted by APNs gateway.");
             } else {
                 log.warn("Notification rejected by the APNs gateway:{}", response.getRejectionReason());
-                if (response.getTokenInvalidationTimestamp() != null) {
+                if (response.getTokenInvalidationTimestamp().isPresent()) {
                     log.warn("and the token is invalid as of {}", response.getTokenInvalidationTimestamp());
                 }
             }
